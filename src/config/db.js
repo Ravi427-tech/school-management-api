@@ -6,6 +6,9 @@ const dbConfig = {
   port: process.env.DB_PORT || 3306,
   user: process.env.DB_USER || "root",
   password: process.env.DB_PASSWORD || "",
+  ssl: process.env.DB_HOST && process.env.DB_HOST !== "localhost" 
+    ? { rejectUnauthorized: true } 
+    : undefined,
 };
 
 const pool = mysql.createPool({
@@ -61,9 +64,9 @@ const initializeDatabase = async () => {
     console.log("✅ Schools table ready.");
     connection.release();
   } catch (err) {
-    console.error("❌ Database initialization error:", err.message);
-    console.error("👉 Please make sure your MySQL password inside the `.env` file is correct!");
-    process.exit(1);
+    console.error("❌ Database initialization error:");
+    console.error(err);
+    // process.exit(1) is removed so we don't kill the Vercel container
   }
 };
 

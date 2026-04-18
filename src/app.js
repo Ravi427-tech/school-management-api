@@ -62,11 +62,15 @@ app.use((err, req, res, next) => {
 // ─── Boot ─────────────────────────────────────────────────────────────────────
 const start = async () => {
   await initializeDatabase();
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-  });
+  
+  // Vercel serverless environments shouldn't manually bind ports
+  if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
+    });
+  }
 };
 
 start();
 
-module.exports = app; // exported for testing
+module.exports = app; // exported for testing and Vercel serverless
